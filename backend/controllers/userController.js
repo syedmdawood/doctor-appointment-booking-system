@@ -363,6 +363,57 @@ const userLogin = async (req, res) => {
     }
 }
 
+//Api for user profile data 
+const getProfile = async (req, res) => {
+    try {
 
+        const { userId } = req.body
+        const userData = await userModel.findById(userId).select('-password')
 
-export { registerUser, userLogin }
+        res.json({ success: true, userData })
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+}
+
+// APi to uldate profile
+const updateProfile = async (req, res) => {
+    try {
+
+        const { userId, name, phone, address, dob, gender } = req.body
+        const imageFile = req.file
+
+        if (!name || !phone || !gender || !dob) {
+            return res.status(400).json({
+                success: false,
+                message: "data missing"
+            });
+        }
+
+        await userModel.findByIdAndUpdate(userId, { name, phone, address: JSON.parse(address), dob, gender })
+
+        if (imageFile) {
+            // upload image to cloudinary
+            const imageUpload = await cloudinary.uploader.upload(imageFile.path, { resource_type: 'image' })
+            const imageUrl = imageUpload.secure_url
+
+            await userModel.findByIdAndUpdate(userId, { image: imageUrl })
+        }
+
+        res.json({ success: true, message: "Profile Updated" })
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+}
+
+export { registerUser, userLogin, getProfile, updateProfile }

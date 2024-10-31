@@ -1,11 +1,12 @@
 import { useContext, useState } from "react";
-import { assets } from "../assets/assets_frontend/assets";
+
 import { AppContext } from "../Context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { assets } from "../assets/assets_frontend/assets";
 
 const MyProfile = () => {
-  const { userData, setUserData, token, loadUserProfileData } =
+  const { userData, setUserData, token, loadUserProfileData, backendUrl } =
     useContext(AppContext);
 
   const [isEdit, setIsEdit] = useState(false);
@@ -13,63 +14,63 @@ const MyProfile = () => {
 
   const updateUserProfileData = async () => {
     try {
-      // Validate user input before making the request
-      if (
-        !userData.name ||
-        !userData.phone ||
-        !userData.gender ||
-        !userData.dob
-      ) {
-        toast.error("Please fill in all required fields.");
-        return;
-      }
+      const fromData = new FormData();
 
-      const formData = new FormData();
-      formData.append("name", userData.name);
-      formData.append("phone", userData.phone);
-      formData.append("address", JSON.stringify(userData.address));
-      formData.append("gender", userData.gender);
-      formData.append("dob", userData.dob);
-      formData.append("image", image);
+      fromData.append("name", userData.name);
+      fromData.append("phone", userData.phone);
+      fromData.append("address", JSON.stringify(userData.address));
+      fromData.append("gender", userData.gender);
+      fromData.append("dob", userData.dob);
+
+      image && fromData.append("image", image);
 
       const { data } = await axios.post(
-        "http://localhost:4000/api/user/update-profile",
-        formData,
+        backendUrl + "/api/user/update-profile",
+        fromData,
         { headers: { token } }
       );
-      console.log(data);
 
       if (data.success) {
         toast.success(data.message);
-        await loadUserProfileData();
+        loadUserProfileData();
         setIsEdit(false);
         setImage(false);
       } else {
-        toast.error(data.message || "Failed to update profile.");
+        toast.error(data.message);
       }
     } catch (error) {
-      console.error("Error updating profile:", error);
-      if (error.response) {
-        // Handle response errors
-        toast.error(
-          error.response.data.message ||
-            "An error occurred while updating your profile."
-        );
-      } else if (error.request) {
-        // Handle request errors
-        toast.error(
-          "No response received from the server. Please try again later."
-        );
-      } else {
-        // Handle unexpected errors
-        toast.error("An unexpected error occurred. Please try again.");
-      }
+      console.log(error);
+      toast.error(error.message);
     }
   };
 
   return (
     userData && (
       <div className="max-w-lg flex flex-col gap-2 text-sm">
+        {isEdit ? (
+          <label htmlFor="image">
+            <div className="inline-block relative cursor-pointer">
+              <img
+                className="w-36 rounded opacity-75"
+                src={image ? URL.createObjectURL(image) : userData.image}
+                alt=""
+              />
+              <img
+                className="w-10 absolute bottom-12 right-12"
+                src={image ? "" : assets.upload_icon}
+                alt=""
+              />
+            </div>
+            <input
+              type="file"
+              id="image"
+              hidden
+              onChange={(e) => setImage(e.target.files[0])}
+            />
+          </label>
+        ) : (
+          <img className="w-36 rounded" src={userData.image} alt="" />
+        )}
         {isEdit ? (
           <input
             className="bg-gray-50 text-3xl font-medium max-w-60 mt-4 "
