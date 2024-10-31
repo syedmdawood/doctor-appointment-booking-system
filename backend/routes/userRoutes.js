@@ -1,13 +1,12 @@
 import express from "express"
+import { registerUser, userLogin } from "../controllers/userController.js";
 
-// import { bookAppointment, cancelAppointment, getProfile, listAppointments, loginUser, registerUser, updateProfile } from "../controllers/userController.js"
-// import authUser from "../middleware/authUser.js"
-// import upload from "../middleware/multer.js"
 
 
 const userRouter = express.Router()
 
-// userRouter.post("/register", registerUser)
+userRouter.post("/register", registerUser)
+userRouter.post("/login", userLogin)
 // userRouter.post("/login", loginUser)
 // userRouter.get("/get-profile", authUser, getProfile)
 // userRouter.post("/update-profile", upload.single('image'), authUser, updateProfile)

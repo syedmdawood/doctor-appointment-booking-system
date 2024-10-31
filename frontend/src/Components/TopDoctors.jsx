@@ -1,11 +1,11 @@
-// import { useContext } from "react";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-// import { AppContext } from "../Context/AppContext";
+import { AppContext } from "../Context/AppContext";
 
 const TopDoctors = () => {
   const navigate = useNavigate();
 
-  // const { doctors } = useContext(AppContext);
+  const { doctors } = useContext(AppContext);
 
   return (
     <div className="flex flex-col items-center gap-4 my-16 text-gray-900 md:mx-10">
@@ -14,7 +14,7 @@ const TopDoctors = () => {
         Simply browse through our extensive list of trusted doctors
       </p>
       <div className="w-full grid grid-cols-auto gap-4 pt-5 gap-y-6 px-3 sm:px-3">
-        {/* {doctors.slice(0, 8).map((item, index) => (
+        {doctors.slice(0, 8).map((item, index) => (
           <div
             onClick={() => {
               navigate(`/appointment/${item._id}`);
@@ -32,7 +32,7 @@ const TopDoctors = () => {
               <p className="text-gray-600 text-sm">{item.speciality}</p>
             </div>
           </div>
-        ))} */}
+        ))}
       </div>
       <button
         onClick={() => {

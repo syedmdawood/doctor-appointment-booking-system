@@ -1,45 +1,40 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { AdminContext } from "../context/AdminContext";
 
-// import { AdminContext } from "../context/AdminContext";
-// import axios from "axios";
-// import { toast } from "react-toastify";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const [state, setState] = useState("Admin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // const { setAToken, backendUri } = useContext(AdminContext);
-  // const [loading, setLoading] = useState(false);
+  const { setAToken, backendUrl } = useContext(AdminContext);
 
-  // const onSubmitHandler = async (event) => {
-  //   event.preventDefault();
-  //   setLoading(true);
+  const onSubmitHandler = async (event) => {
+    event.preventDefault();
 
-  //   try {
-  //     if (state === "Admin") {
-  //       // Fix the extra space
-  //       const { data } = await axios.post(backendUri + "/api/admin/login", {
-  //         email,
-  //         password,
-  //       });
-  //       if (data.success) {
-  //         localStorage.setItem("atoken", data.token);
-  //         setAToken(data.token);
-  //       } else {
-  //         toast.error(data.message);
-  //       }
-  //     } else {
-  //       console.log(Error);
-  //     }
-  //   } catch (error) {
-  //     console.error("Login error:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+    try {
+      if (state === "Admin") {
+        const { data } = await axios.post(backendUrl + "/api/admin/login", {
+          email,
+          password,
+        });
+        if (data.success) {
+          localStorage.setItem("aToken", data.token);
+          setAToken(data.token);
+        } else {
+          toast.error(data.message);
+        }
+      } else {
+        console.log("Doctor Login");
+      }
+    } catch (error) {
+      console.log("Error", error);
+    }
+  };
 
   return (
-    <form className="min-h-[80vh] flex items-center">
+    <form className="min-h-[80vh] flex items-center" onSubmit={onSubmitHandler}>
       <div className="flex flex-col gap-3 m-auto items-start p-8 min-w-[-340px] sm:min-w-96 border rounded-xl text-[#5E5E5E] text-sm shadow-lg">
         <p className="text-2xl font-semibold m-auto">
           <span className="text-primary">{state}</span> Login
@@ -70,7 +65,7 @@ const Login = () => {
           type="submit"
           // disabled={loading}
         >
-          {/* {loading ? "Logging in..." : "Login"} */}
+          {"Login"}
         </button>
 
         {state === "Admin" ? (

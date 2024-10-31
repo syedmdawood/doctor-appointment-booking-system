@@ -4,7 +4,6 @@ import "./index.css";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-// import { AdminContext } from "./context/AdminContext";
 import Navbar from "./components/Navbar";
 import SideBar from "./components/SideBar";
 import { Route, Routes } from "react-router-dom";
@@ -12,10 +11,12 @@ import Dashboard from "./pages/Admin/Dashboard";
 import AllAppointments from "./pages/Admin/AllAppointments";
 import AddDoctor from "./pages/Admin/AddDoctor";
 import DoctorsList from "./pages/Admin/DoctorsList";
+import { useContext } from "react";
+import { AdminContext } from "./context/AdminContext";
 
 const App = () => {
-  // const { atoken } = useContext(AdminContext);
-  return (
+  const { aToken } = useContext(AdminContext);
+  return aToken ? (
     <div className="bg-[#F8F9FD]">
       <ToastContainer />
       <Navbar />
@@ -30,13 +31,12 @@ const App = () => {
         </Routes>
       </div>
     </div>
+  ) : (
+    <>
+      <Login />
+      <ToastContainer />
+    </>
   );
-  //  : (
-  //   <>
-  //     <Login />
-  //     <ToastContainer />
-  //   </>
-  // );
 };
 
 export default App;

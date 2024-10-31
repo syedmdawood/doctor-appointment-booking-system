@@ -49,3 +49,42 @@ import doctorModel from "../models/doctorModel.js";
 // };
 
 // export { doctorAvailability, doctorsList };
+
+
+
+const chnageAvailability = async (req, res) => {
+    try {
+
+        const { docId } = req.body
+
+        const docData = await doctorModel.findById(docId)
+        await doctorModel.findByIdAndUpdate(docId, { available: !docData.available })
+        res.json({ success: true, message: "Availability Chnage" })
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+}
+
+
+const doctorsList = async (req, res) => {
+    try {
+
+        const doctors = await doctorModel.find({}).select("-password")
+        res.json({ success: true, doctors })
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+}
+
+
+export { chnageAvailability, doctorsList }
